@@ -1,0 +1,28 @@
+# Virtual Environment
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# Model files
+*.h5
+*.pkl
+
+# Dataset
+dataset/*
+!dataset/dataset.csv
+
+# Logs
+*.log
