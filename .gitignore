@@ -24,5 +24,11 @@ build/
 dataset/*
 !dataset/dataset.csv
 
+# Data
+data/*
+!data/train.csv
+!data/val.csv
+!data/test.csv
+
 # Logs
 *.log
