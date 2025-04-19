@@ -51,17 +51,18 @@ def main():
                 st.error("Mohon lengkapi nama dan suku!")
             else:
                 with st.spinner("Menyimpan data..."):
-                    # Create user folder
                     user_path = dataset_manager.create_user_folder(suku, nama)
-                    
-                    # Process photos and get entries
                     entries = process_photos(photo_data, user_path)
-                    
-                    # Update dataset
                     dataset_manager.add_entries(entries)
-                    
+
                     st.success("Data berhasil disimpan!")
                     st.info(f"Data tersimpan di folder: dataset/{suku.lower()}/{nama.lower()}/")
+
+                    st.subheader("Preview Hasil Crop:")
+                    cols = st.columns(4)
+                    for idx, entry in enumerate(entries[:4]):
+                        with cols[idx]:
+                            st.image(entry['path_gambar'], caption=f"Wajah {idx+1}", use_column_width=True)
 
 if __name__ == "__main__":
     main()
