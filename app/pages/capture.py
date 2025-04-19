@@ -2,7 +2,7 @@ import streamlit as st
 from pathlib import Path
 from ..components.photo_upload import PhotoUploadComponent
 from ..utils.dataset_manager import DatasetManager
-from ..utils.image_processor import save_image, detect_and_crop_face
+from ..utils.image_processor import save_image, detect_and_crop_face, detect_and_crop_face_mtcnn
 
 def process_photos(photo_data, user_path):
     """Process and save photos, return entries for dataset"""
@@ -13,7 +13,7 @@ def process_photos(photo_data, user_path):
         orig_path = save_image(data['image'], user_path / f"img{idx}")
         
         # Process and save cropped image
-        processed_img = detect_and_crop_face(data['image'])
+        processed_img = detect_and_crop_face_mtcnn(data['image'])
         crop_path = save_image(processed_img, user_path / f"img{idx}", is_processed=True)
         
         entries.append({
