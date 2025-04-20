@@ -63,6 +63,9 @@ dataset\cina\claudia\img3_crop.jpeg,claudia,cina,senyum,frontal,terang
 dataset\cina\claudia\img1_crop.jpeg,claudia,cina,netral,frontal,gelap
 dataset\cina\claudia\img2_crop.jpeg,claudia,cina,senyum,frontal,terang
 dataset\batak\anggi\img1_crop.jpg,anggi,batak,netral,profil,terang
+dataset\batak\anggi\img2_crop.jpg,anggi,batak,netral,profil,terang
+dataset\batak\anggi\img3_crop.jpg,anggi,batak,netral,profil,terang
+dataset\batak\anggi\img4_crop.jpg,anggi,batak,netral,profil,terang
 dataset\batak\natalie\img1_crop.jpg,natalie,batak,senyum,frontal,terang
 dataset\batak\natalie\img2_crop.jpg,natalie,batak,terkejut,frontal,terang
 dataset\batak\natalie\img3_crop.jpg,natalie,batak,tersenyum,frontal,terang
