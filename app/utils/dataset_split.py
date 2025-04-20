@@ -15,22 +15,43 @@ def analyze_dataset_distribution(csv_path):
     print(df['pencahayaan'].value_counts(normalize=True))
     return df
 
-def split_dataset(csv_path, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15, random_state=42):
+def split_dataset(csv_path, train_ratio=0.6, val_ratio=0.2, test_ratio=0.2, random_state=42):
     # Baca dataset
     df = pd.read_csv(csv_path)
     
     # Pastikan proporsi benar
     assert train_ratio + val_ratio + test_ratio == 1.0, "Proporsi split harus total 1.0"
     
-    # Kolom 'person' diubah menjadi 'nama_orang' untuk konsistensi dengan struktur CSV
-    unique_persons = df['nama_orang'].unique()
-    train_persons, temp_persons = train_test_split(unique_persons, train_size=train_ratio, random_state=random_state)
-    val_persons, test_persons = train_test_split(temp_persons, train_size=val_ratio/(val_ratio + test_ratio), random_state=random_state)
+    # Split stratified berdasarkan suku
+    train_df, temp_df = train_test_split(
+        df, 
+        train_size=train_ratio, 
+        stratify=df['suku'], 
+        random_state=random_state
+    )
+    val_df, test_df = train_test_split(
+        temp_df, 
+        train_size=val_ratio/(val_ratio + test_ratio), 
+        stratify=temp_df['suku'], 
+        random_state=random_state
+    )
     
-    # Buat dataframe untuk masing-masing split
-    train_df = df[df['nama_orang'].isin(train_persons)]
-    val_df = df[df['nama_orang'].isin(val_persons)]
-    test_df = df[df['nama_orang'].isin(test_persons)]
+    # Verifikasi bahwa semua kelas ada di setiap split
+    classes = df['suku'].unique()
+    for split_name, split_df in [("train", train_df), ("val", val_df), ("test", test_df)]:
+        missing_classes = set(classes) - set(split_df['suku'].unique())
+        if missing_classes:
+            print(f"Peringatan: Kelas {missing_classes} tidak ada di {split_name}. Menambahkan sampel...")
+            for cls in missing_classes:
+                cls_samples = df[df['suku'] == cls].sample(n=1, random_state=random_state)
+                split_df = pd.concat([split_df, cls_samples], ignore_index=True)
+                # Hapus sampel dari split lain jika diperlukan
+                if split_name != "train":
+                    train_df = train_df[~train_df['path_gambar'].isin(cls_samples['path_gambar'])]
+                if split_name != "val":
+                    val_df = val_df[~val_df['path_gambar'].isin(cls_samples['path_gambar'])]
+                if split_name != "test":
+                    test_df = test_df[~test_df['path_gambar'].isin(cls_samples['path_gambar'])]
     
     project_root = Path(__file__).parent.parent.parent
     data_dir = project_root / 'data'
@@ -41,4 +62,13 @@ def split_dataset(csv_path, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15, ra
     val_df.to_csv(data_dir / 'val.csv', index=False)
     test_df.to_csv(data_dir / 'test.csv', index=False)
     
+    # Cetak distribusi kelas
+    print("\nDistribusi kelas setelah split:")
+    for split_name, split_df in [("train", train_df), ("val", val_df), ("test", test_df)]:
+        print(f"\n{split_name}.csv:")
+        print(split_df['suku'].value_counts())
+    
     return train_df, val_df, test_df
+
+if __name__ == "__main__":
+    split_dataset("dataset/dataset.csv")

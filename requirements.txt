@@ -12,6 +12,7 @@ torchvision==0.17.0
 torchaudio==2.2.0
 facenet-pytorch==2.5.3
 insightface==0.7.3
-mediapipe==0.10.9
+mediapipe
 albumentations==1.4.0
 onnxruntime==1.17.1
+seaborn

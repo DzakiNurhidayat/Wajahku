@@ -33,3 +33,8 @@ data/*
 
 # Logs
 *.log
+
+outputs
+
+models/ethnicity_model.keras
+models/ethnicity_model.h5
