@@ -252,52 +252,23 @@ def save_misclassified_images(generator, y_true, y_pred, n=5):
         plt.close()
         print(f"Gambar: {img_path}, True: {CLASSES[y_true[idx]]}, Pred: {CLASSES[y_pred[idx]]}")
 
-def visualize_tsne(model):
+def visualize_tsne(model, generator):
     """
-    Visualize t-SNE of face embeddings using augmented_dataset.csv.
+    Visualize t-SNE of face embeddings.
     """
-    generator = load_data('data/augmented/augmented_dataset.csv')
     generator.reset()
-    
-    # Debugging: Periksa generator
-    print(f"Jumlah data: {len(generator.filenames)}")
-    print(f"Indeks kelas dari generator: {generator.class_indices}")
-    print(f"Kelas generator: {generator.classes}")
-    print(f"Panjang kelas generator: {len(generator.classes)}")
-    
-    # Pastikan generator.classes tidak kosong
-    if len(generator.classes) == 0:
-        raise ValueError("Generator.classes kosong! Periksa kolom 'suku' di dataset.")
-    
-    # Ekstraksi embedding
-    embedding_model = Model(inputs=model.input, outputs=model.layers[-3].output)
+    # Buat model untuk ekstraksi embedding (sebelum softmax)
+    embedding_model = Model(inputs=model.input, outputs=model.layers[-3].output)  # Ambil lapisan Dense(1024)
     embeddings = embedding_model.predict(generator)
-    print(f"Bentuk embeddings: {embeddings.shape}")
-    
-    # Perplexity untuk t-SNE
-    perplexity = min(30, len(embeddings) - 1)
-    print(f"Menggunakan perplexity: {perplexity}")
-    tsne = TSNE(n_components=2, perplexity=perplexity, random_state=42)
+    # Gunakan perplexity kecil karena dataset test kecil
+    tsne = TSNE(n_components=2, perplexity=5, random_state=42)
     tsne_results = tsne.fit_transform(embeddings)
-    print(f"Bentuk t-SNE results: {tsne_results.shape}")
-    
-    # Buat pemetaan dari nama kelas ke indeks berdasarkan generator.class_indices
-    class_indices = generator.class_indices  # {'batak': 0, 'cina': 1, ...} 
-    index_to_class = {v: k for k, v in class_indices.items()}  # {0: 'batak', 1: 'cina', ...} 
-    
-    # Plot t-SNE
     plt.figure(figsize=(10, 8))
-    for class_name in CLASSES:
-        # Dapatkan indeks kelas dari class_indices
-        class_idx = class_indices[class_name]
-        idx = np.where(np.atleast_1d(generator.classes == class_idx))[0]
-        print(f"Kelas {class_name}: {len(idx)} samp cil, indeks: {idx}")
-        if len(idx) > 0:
-            plt.scatter(tsne_results[idx, 0], tsne_results[idx, 1], label=class_name, alpha=0.5)
-        else:
-            print(f"Tidak ada data untuk kelas {class_name}")
+    for i, cls in enumerate(CLASSES):
+        idx = np.where(generator.classes == i)[0]
+        plt.scatter(tsne_results[idx, 0], tsne_results[idx, 1], label=cls, alpha=0.5)
     plt.legend()
-    plt.title('t-SNE Visualization of Face Embeddings (Augmented Dataset)')
+    plt.title('t-SNE Visualization of Face Embeddings')
     plt.savefig(OUTPUT_PATH / 'tsne_embeddings.png')
     plt.close()
 
@@ -344,7 +315,7 @@ def evaluate_model(model):
     save_misclassified_images(test_generator, y_true, y_pred)
     
     # Visualisasi t-SNE
-    visualize_tsne(model)
+    visualize_tsne(model, test_generator)
 
 def main():
     """
@@ -365,9 +336,10 @@ def run_visualize_tsne():
     
     print(f"Memuat model dari {MODEL_PATH}...")
     model = load_model(MODEL_PATH)
+    test_generator = load_data('data/test.csv')
     
     print("Menjalankan visualize_tsne...")
-    visualize_tsne(model)
+    visualize_tsne(model, test_generator)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ethnicity Classifier")
