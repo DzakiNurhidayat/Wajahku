@@ -1,3 +1,0 @@
-dataset\jawa\andhara\img1_crop.jpg, dataset\jawa\andhara\img2_crop.jpg
-dataset\jawa\andhara\img2_crop.jpg, dataset\jawa\andhara\img3_crop.jpg
-dataset\jawa\andhara\img2_crop.jpg, dataset\jawa\andhara\img4_crop.jpg
