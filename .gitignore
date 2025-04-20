@@ -30,5 +30,12 @@ data/*
 !data/val.csv
 !data/test.csv
 
+# Model
+models/*
+!models/face_similarity.py
+
+# Results
+results/*
+
 # Logs
 *.log
