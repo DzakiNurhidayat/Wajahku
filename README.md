@@ -50,4 +50,5 @@ python scripts/prepare_data.py --step analyze_augmented
 ```bash
 python scripts/train_face_similarity.py
 python scripts/evaluate_face_similarity.py
+python -m app.utils.ethnicity_classifier
 ```
