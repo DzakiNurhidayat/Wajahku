@@ -29,7 +29,7 @@ python -m venv venv
 
 ### 3. Install Dependensi
 ```bash
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 ## Cara Menjalankan Sistem
